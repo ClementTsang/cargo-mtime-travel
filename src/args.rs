@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-/// cargo-mtime-travel stores and restores the mtime attribute for files.
+/// cargo-mtime-travel saves and restores the mtime attribute for files.
 ///
 /// This can be helpful when trying to avoid rebuilding in Rust projects
 /// when leveraging caching (see https://github.com/rust-lang/cargo/issues/6529
@@ -26,9 +26,9 @@ pub(crate) enum Commands {
         /// The location to recursively scan for files.
         target_dir: PathBuf,
 
-        /// Files/directories to not scan. Supports globbing.
+        /// Regex patterns to skip.
         #[arg(short, long)]
-        ignore: Vec<PathBuf>,
+        ignore: Vec<String>,
 
         /// Whether to be verbose.
         #[arg(short, long, action = clap::ArgAction::SetTrue)]

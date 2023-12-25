@@ -2,6 +2,7 @@ use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use anyhow::{bail, Result};
 use filetime::FileTime;
+use regex::Regex;
 use walkdir::WalkDir;
 
 use crate::{file_entry::FileEntry, hash::hash_file};
@@ -10,7 +11,7 @@ use crate::{file_entry::FileEntry, hash::hash_file};
 pub(crate) fn save_mtimes(
     mtime_file_path: PathBuf,
     target_dir: PathBuf,
-    ignore: Vec<PathBuf>,
+    ignore: Vec<String>,
     verbose: bool,
 ) -> Result<()> {
     if !target_dir.exists() {
@@ -23,10 +24,14 @@ pub(crate) fn save_mtimes(
         mtime_file_path.to_string_lossy()
     );
 
-    let ignore_paths = ignore
+    let ignore_regexes = ignore
         .into_iter()
-        .filter_map(|f| f.canonicalize().ok())
+        .filter_map(|f| Regex::new(&f).ok())
         .collect::<Vec<_>>();
+
+    if verbose {
+        println!("Ignoring the following paths: {ignore_regexes:?}");
+    }
 
     let mut data = BTreeMap::new();
 
@@ -34,9 +39,10 @@ pub(crate) fn save_mtimes(
         .sort_by_file_name()
         .into_iter()
         .filter_entry(|e| match e.path().canonicalize() {
-            Ok(path) => !ignore_paths
-                .iter()
-                .any(|ignore_path| path.starts_with(ignore_path)),
+            Ok(path) => {
+                let s = path.to_string_lossy();
+                !ignore_regexes.iter().any(|re| re.is_match(&s))
+            }
             Err(_) => false,
         })
         .filter_map(|entry| entry.ok())

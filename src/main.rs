@@ -1,4 +1,4 @@
-//! cargo-mtime-travel stores and restores the mtime attribute for files.
+//! cargo-mtime-travel saves and restores the mtime attribute for files.
 
 mod args;
 mod file_entry;
