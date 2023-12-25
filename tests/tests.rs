@@ -1,7 +1,7 @@
 use std::{env, process::Command};
 
 fn binary() -> Command {
-    let exe = env!("CARGO_BIN_EXE_cargo-mtime-travel");
+    let exe = env!("CARGO_BIN_EXE_mtime-travel");
     Command::new(exe)
 }
 

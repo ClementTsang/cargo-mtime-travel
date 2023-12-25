@@ -14,6 +14,7 @@ pub(crate) fn restore_mtimes(
     mtime_file_path: PathBuf,
     target_dir: PathBuf,
     verbose: bool,
+    ignore_hash: bool,
 ) -> Result<()> {
     let data: BTreeMap<String, FileEntry> = {
         let mtime_file = File::open(&mtime_file_path)?;
@@ -25,6 +26,12 @@ pub(crate) fn restore_mtimes(
         mtime_file_path.to_string_lossy(),
         target_dir.to_string_lossy()
     );
+
+    if verbose {
+        if ignore_hash {
+            println!("Note that hashes are being ignored!");
+        }
+    }
 
     let mut num_restored = 0;
 
@@ -46,7 +53,7 @@ pub(crate) fn restore_mtimes(
             continue;
         };
 
-        if hash == entry.hash {
+        if ignore_hash || hash == entry.hash {
             let metadata = match fs::metadata(path) {
                 Ok(metadata) => metadata,
                 Err(err) => {

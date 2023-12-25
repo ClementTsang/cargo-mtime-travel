@@ -28,8 +28,9 @@ fn main() -> Result<()> {
             mtime_file,
             target_dir,
             verbose,
+            ignore_hash,
         } => {
-            restore_mtimes(mtime_file, target_dir, verbose)?;
+            restore_mtimes(mtime_file, target_dir, verbose, ignore_hash)?;
         }
     }
 

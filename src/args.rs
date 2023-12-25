@@ -2,11 +2,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
-/// cargo-mtime-travel saves and restores the mtime attribute for files.
-///
-/// This can be helpful when trying to avoid rebuilding in Rust projects
-/// when leveraging caching (see https://github.com/rust-lang/cargo/issues/6529
-/// for more details).
+/// A small tool to save and restore the mtime attribute for files.
 #[derive(Parser)]
 #[command(author, version, about, long_about(None))]
 #[command(arg_required_else_help(true))]
@@ -46,5 +42,9 @@ pub(crate) enum Commands {
         /// Whether to be verbose.
         #[arg(short, long, action = clap::ArgAction::SetTrue)]
         verbose: bool,
+
+        /// Whether to ignore hashes matching. Defaults to false.
+        #[arg(short, long, action = clap::ArgAction::SetTrue)]
+        ignore_hash: bool,
     },
 }
