@@ -9,6 +9,14 @@ will rebuild based on mtimes (see <https://github.com/rust-lang/cargo/issues/652
 is undesirable is pulling a project via git in CI, as that will alter the mtime values and therefore normally trigger
 a rebuild, even if you may already have cached the build artifacts from a prior CI run.
 
+## Installation
+
+You can install it via `cargo`:
+
+```bash
+cargo install --locked mtime-travel
+```
+
 ## Usage
 
 ### Saving
