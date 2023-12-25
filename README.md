@@ -21,7 +21,7 @@ cargo install --locked mtime-travel
 
 ### Saving
 
-```bash
+```shell
 Usage: mtime-travel save [OPTIONS] <TARGET_DIR>
 
 Arguments:
@@ -36,19 +36,19 @@ Options:
 
 To save the current directory to a file called `mtimes.json`:
 
-```bash
+```shell
 mtime-travel save ./
 ```
 
 To ignore certain regexes:
 
-```bash
+```shell
 mtime-travel save --ignore ".*foo.*" ./
 ```
 
 To save to another location:
 
-```bash
+```shell
 mtime-travel save --mtime-file <MY_MTIME_FILE_PATH> ./
 ```
 
@@ -56,7 +56,7 @@ This will output a `.json` file with the files' hashes and mtime value.
 
 ### Restoring
 
-```bash
+```shell
 Usage: mtime-travel restore [OPTIONS] <TARGET_DIR>
 
 Arguments:
@@ -71,18 +71,18 @@ Options:
 
 To restore the current directory's files given a file called `mtimes.json` in the same directory _if the file hashes match_:
 
-```bash
+```shell
 mtime-travel restore ./
 ```
 
 To ignore file hashes:
 
-```bash
+```shell
 mtime-travel restore --ignore-hash ./
 ```
 
 To use a different location for the saved mtime data:
 
-```bash
+```shell
 mtime-travel restore --mtime-file <MY_MTIME_FILE_PATH> ./
 ```
