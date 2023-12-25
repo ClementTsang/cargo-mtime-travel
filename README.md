@@ -2,9 +2,10 @@
 
 A small tool to save and restore the mtime attribute for files.
 
-This can be useful for things like avoiding Rust rebuilds if the file contents didn't change, but the mtimes did.
-For example, when pulling from git in CI, where you may already have cached build artifacts (see <https://github.com/rust-lang/cargo/issues/6529>
-for more discussion on this topic).
+This can be useful for things like avoiding Rust rebuilds if the file contents didn't change, but the mtimes did, as Rust
+will rebuild based on mtimes (see <https://github.com/rust-lang/cargo/issues/6529>). A example where rebuilding like this
+is undesirable is pulling a project via git in CI, as that will alter the mtime values and therefore normally trigger
+a rebuild, even if you may already have cached the build artifacts from a prior CI run.
 
 ## Usage
 
