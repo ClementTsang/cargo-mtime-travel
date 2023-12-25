@@ -1,5 +1,7 @@
 # mtime-travel
 
+[<img src="https://img.shields.io/crates/v/mtime-travel.svg?style=flat-square" alt="crates.io link">](https://crates.io/crates/mtime-travel)
+
 A small tool to save and restore the mtime attribute for files.
 
 This can be useful for things like avoiding Rust rebuilds if the file contents didn't change, but the mtimes did, as Rust
