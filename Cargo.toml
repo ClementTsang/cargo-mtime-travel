@@ -1,10 +1,12 @@
 [package]
-name = "cargo-mtime-travel"
+name = "mtime-travel"
 version = "0.0.1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Save and restore the mtime attribute for files."
 repository = "https://github.com/ClementTsang/cargo-mtime-travel"
+keywords = ["cargo", "cargo-subcommand", "mtime"]
+categories = ["caching", "command-line-utilities", "development-tools::profiling", "development-tools::cargo-plugins"]
 readme = "README.md"
 
 [dependencies]
