@@ -11,7 +11,7 @@ a rebuild, even if you may already have cached the build artifacts from a prior 
 
 ## Installation
 
-You can install it via `cargo`:
+You can install mtime-travel via `cargo`:
 
 ```bash
 cargo install --locked mtime-travel
