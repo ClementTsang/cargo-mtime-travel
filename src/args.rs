@@ -22,11 +22,12 @@ pub(crate) enum Commands {
         /// The location to recursively scan for files.
         target_dir: PathBuf,
 
-        /// Regex patterns to skip.
+        /// Regex patterns for which files to skip; multiple regex strings can be passed.
+        /// Note the file paths checked are the absolute paths.
         #[arg(short, long, num_args = 0..)]
         ignore: Vec<String>,
 
-        /// Whether to be verbose.
+        /// Enable verbose output.
         #[arg(short, long, action = clap::ArgAction::SetTrue)]
         verbose: bool,
     },
@@ -39,11 +40,11 @@ pub(crate) enum Commands {
         /// The location to recursively restore mtimes to.
         target_dir: PathBuf,
 
-        /// Whether to be verbose.
+        /// Enable verbose output.
         #[arg(short, long, action = clap::ArgAction::SetTrue)]
         verbose: bool,
 
-        /// Whether to ignore matching hashes when restoring mtimes. Defaults to false.
+        /// Restore mtime for a file even if the hash does not match.
         #[arg(short, long, action = clap::ArgAction::SetTrue)]
         ignore_hash: bool,
     },

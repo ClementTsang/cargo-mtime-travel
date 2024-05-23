@@ -29,10 +29,10 @@ Arguments:
   <TARGET_DIR>  The location to recursively scan for files
 
 Options:
-  -m, --file <FILE>              The location to a file to save the current mtimes to [default: mtimes.json]
-  -i, --ignore <IGNORE>          Regex patterns to skip
-  -v, --verbose                  Whether to be verbose
-  -h, --help                     Print help
+  -f, --file <FILE>           The location to a file to save the current mtimes to [default: mtimes.json]
+  -i, --ignore [<IGNORE>...]  Regex patterns for which files to skip; multiple regex strings can be passed. Note the file paths checked are the absolute paths
+  -v, --verbose               Enable verbose output
+  -h, --help                  Print help
 ```
 
 To save the current directory to a file called `mtimes.json`:
@@ -64,10 +64,10 @@ Arguments:
   <TARGET_DIR>  The location to recursively restore mtimes to
 
 Options:
-  -m, --file <FILE>              The location to a file to restore previous mtimes from [default: mtimes.json]
-  -v, --verbose                  Whether to be verbose
-  -i, --ignore-hash              Whether to ignore hashes matching. Defaults to false
-  -h, --help                     Print help
+  -f, --file <FILE>  The location to a file to restore previous mtimes from [default: mtimes.json]
+  -v, --verbose      Enable verbose output
+  -i, --ignore-hash  Restore mtime for a file even if the hash does not match
+  -h, --help         Print help
 ```
 
 To restore the current directory's files given a file called `mtimes.json` in the same directory _if the file hashes match_:
