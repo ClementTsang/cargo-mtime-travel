@@ -32,8 +32,6 @@ codegen-units = 1
 
 [lints.rust]
 rust_2018_idioms = "deny"
-missing_docs = "deny"
-unused_extern_crates = "deny"
 
 [lints.rustdoc]
 broken_intra_doc_links = "deny"

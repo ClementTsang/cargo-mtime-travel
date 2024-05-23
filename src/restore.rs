@@ -30,10 +30,8 @@ pub(crate) fn restore_mtimes(
         target_dir.to_string_lossy()
     );
 
-    if verbose {
-        if ignore_hash {
-            println!("Note that hashes are being ignored!");
-        }
+    if verbose && ignore_hash {
+        println!("Note that hashes are being ignored!");
     }
 
     let mut num_restored = 0;
