@@ -17,7 +17,7 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'ClementTsang/bottom' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'ClementTsang/mtime-travel' }}
 
 jobs:
   # Check if things should be skipped.
