@@ -17,20 +17,20 @@ fn main() -> Result<()> {
 
     match args.command {
         Commands::Save {
-            mtime_file,
+            file,
             target_dir,
             ignore,
             verbose,
         } => {
-            save_mtimes(mtime_file, target_dir, ignore, verbose)?;
+            save_mtimes(file, target_dir, ignore, verbose)?;
         }
         Commands::Restore {
-            mtime_file,
+            file,
             target_dir,
             verbose,
             ignore_hash,
         } => {
-            restore_mtimes(mtime_file, target_dir, verbose, ignore_hash)?;
+            restore_mtimes(file, target_dir, verbose, ignore_hash)?;
         }
     }
 

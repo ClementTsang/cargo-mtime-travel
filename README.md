@@ -2,7 +2,8 @@
 
 [<img src="https://img.shields.io/crates/v/mtime-travel.svg?style=flat-square" alt="crates.io link">](https://crates.io/crates/mtime-travel)
 
-A small tool to save and restore the mtime attribute for files.
+A small tool to save and restore the mtime attribute for files. When saving, it will record the file hashes, and when restoring,
+it will only restore the mtime if the file hash matches. File hashing is done using SHA-256.
 
 This can be useful for things like avoiding Rust rebuilds if the file contents didn't change, but the mtimes did, as Rust
 will rebuild based on mtimes (see <https://github.com/rust-lang/cargo/issues/6529>). A example where rebuilding like this
@@ -28,7 +29,7 @@ Arguments:
   <TARGET_DIR>  The location to recursively scan for files
 
 Options:
-  -m, --mtime-file <MTIME_FILE>  The location to a file to save the current mtimes to [default: mtimes.json]
+  -m, --file <FILE>              The location to a file to save the current mtimes to [default: mtimes.json]
   -i, --ignore <IGNORE>          Regex patterns to skip
   -v, --verbose                  Whether to be verbose
   -h, --help                     Print help
@@ -49,7 +50,7 @@ mtime-travel save --ignore ".*foo.*" ./
 To save to another location:
 
 ```shell
-mtime-travel save --mtime-file <MY_MTIME_FILE_PATH> ./
+mtime-travel save --file <MTIME_FILE_PATH> ./
 ```
 
 This will output a `.json` file with the files' hashes and mtime value.
@@ -63,7 +64,7 @@ Arguments:
   <TARGET_DIR>  The location to recursively restore mtimes to
 
 Options:
-  -m, --mtime-file <MTIME_FILE>  The location to a file to restore previous mtimes from [default: mtimes.json]
+  -m, --file <FILE>              The location to a file to restore previous mtimes from [default: mtimes.json]
   -v, --verbose                  Whether to be verbose
   -i, --ignore-hash              Whether to ignore hashes matching. Defaults to false
   -h, --help                     Print help
@@ -81,8 +82,8 @@ To ignore file hashes:
 mtime-travel restore --ignore-hash ./
 ```
 
-To use a different location for the saved mtime data:
+To restore from a file at a different path:
 
 ```shell
-mtime-travel restore --mtime-file <MY_MTIME_FILE_PATH> ./
+mtime-travel restore --file <MTIME_FILE_PATH> ./
 ```

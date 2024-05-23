@@ -26,35 +26,47 @@ pub(crate) fn save_mtimes(
 
     let ignore_regexes = ignore
         .into_iter()
-        .filter_map(|f| Regex::new(&f).ok())
+        .filter_map(|f| match Regex::new(&f) {
+            Ok(regex) => Some(regex),
+            Err(err) => {
+                if verbose {
+                    println!("the following regex is invalid and will be ignored: {f} - {err}");
+                }
+                None
+            }
+        })
         .collect::<Vec<_>>();
 
     if verbose {
-        println!("Ignoring the following paths: {ignore_regexes:?}");
+        println!("Using the following regexes: {ignore_regexes:?}");
     }
 
     let mut data = BTreeMap::new();
 
-    for entry in WalkDir::new(target_dir)
+    for path in WalkDir::new(target_dir)
         .sort_by_file_name()
         .into_iter()
-        .filter_entry(|e| match e.path().canonicalize() {
-            Ok(path) => {
-                let s = path.to_string_lossy();
-                !ignore_regexes.iter().any(|re| re.is_match(&s))
+        .filter_map(|e| {
+            let path = e.ok().and_then(|e| e.path().canonicalize().ok());
+            match path {
+                Some(path) => {
+                    let s = path.to_string_lossy();
+                    if !ignore_regexes.iter().any(|re| re.is_match(&s)) {
+                        Some(path)
+                    } else {
+                        None
+                    }
+                }
+                None => None,
             }
-            Err(_) => false,
         })
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| !entry.path_is_symlink())
+        .filter(|entry| !entry.is_symlink())
     {
-        let path = entry.path();
-
         if path.is_dir() {
             continue;
         }
 
-        let metadata = match fs::metadata(path) {
+        let metadata = match fs::metadata(&path) {
             Ok(metadata) => metadata,
             Err(err) => {
                 if verbose {
@@ -70,7 +82,10 @@ pub(crate) fn save_mtimes(
         };
 
         let path_name = path.as_os_str().to_string_lossy().to_string();
-        let mtime = FileTime::from_last_modification_time(&metadata).unix_seconds();
+        let (mtime, mtime_nano) = {
+            let file_time = FileTime::from_last_modification_time(&metadata);
+            (file_time.unix_seconds(), file_time.nanoseconds())
+        };
         let Ok(hash) = hash_file(&path) else {
             if verbose {
                 eprintln!(
@@ -82,7 +97,11 @@ pub(crate) fn save_mtimes(
             continue;
         };
 
-        let entry = FileEntry { mtime, hash };
+        let entry = FileEntry {
+            mtime,
+            mtime_nano,
+            hash,
+        };
         data.insert(path_name, entry);
     }
 
