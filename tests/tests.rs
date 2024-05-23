@@ -202,7 +202,7 @@ fn test_different_directory() {
         assert_eq!(saved_mtime, f.metadata().unwrap().mtime());
 
         // Now change the mtime.
-        filetime::set_file_mtime(&f, FileTime::now()).unwrap();
+        filetime::set_file_mtime(f, FileTime::now()).unwrap();
         assert_ne!(saved_mtime, f.metadata().unwrap().mtime());
     }
 
