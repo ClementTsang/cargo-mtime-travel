@@ -1,0 +1,86 @@
+# Main CI workflow to validate PRs and branches are correctly formatted
+# and pass tests.
+
+name: ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  CARGO_PROFILE_DEV_DEBUG: 0
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'ClementTsang/bottom' }}
+
+jobs:
+  # Check if things should be skipped.
+  pre-job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - name: Check if this action should be skipped
+        id: skip_check
+        uses: fkirc/skip-duplicate-actions@12aca0a884f6137d619d6a8a09fcc3406ced5281 # v5.3.0
+        with:
+          skip_after_successful_duplicate: "true"
+          paths: '[".cargo/**", ".github/workflows/ci.yml", "src/**", "tests/**","Cargo.lock", "Cargo.toml"]'
+          do_not_skip: '["workflow_dispatch", "push"]'
+
+  # Runs rustfmt + tests + clippy.
+  test:
+    needs: pre-job
+    if: ${{ needs.pre-job.outputs.should_skip != 'true' }}
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 18
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@b44cb146d03e8d870c57ab64b80f04586349ca5d
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+          target: x86_64-unknown-linux-gnu
+
+      - name: Enable Rust cache
+        uses: Swatinem/rust-cache@988c164c3d0e93c4dbab36aaf5bbeb77425b2894 # 2.4.0
+        if: ${{ github.event_name != 'pull_request' || ! github.event.pull_request.head.repo.fork }} # If it is a PR, only if not a fork
+        with:
+          cache-all-crates: true
+
+      - name: Check cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: Build tests
+        uses: ClementTsang/cargo-action@v0.0.3
+        with:
+          command: test
+          args: --no-run --locked
+        env:
+          RUST_BACKTRACE: full
+
+      - name: Run tests
+        uses: ClementTsang/cargo-action@v0.0.3
+        with:
+          command: test
+          args: --no-fail-fast -- --nocapture --quiet
+        env:
+          RUST_BACKTRACE: full
+
+      - name: Run clippy
+        uses: ClementTsang/cargo-action@v0.0.3
+        with:
+          command: clippy
+          args: --all-targets --workspace -- -D warnings
+          cross-version: 0.2.5
+        env:
+          RUST_BACKTRACE: full
